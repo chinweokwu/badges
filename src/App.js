@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { requestUsers } from "./action";
+import data from "./data.json";
+import "./App.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+const App = () => {
+  const { usersData, isLoading } = useSelector((state) => state);
+  const dispatch = useDispatch();
 
-function App() {
+  useEffect(() => {
+    dispatch(requestUsers(data));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {isLoading && <div className="loading">Data loading...</div>}
+      {usersData.map((user) => {
+        return (
+          <div key={user.id} className="container">
+            <div className="content">
+              <h1>{user.name}</h1>
+              <span>{user.email}</span>
+              <h3>{user.post}</h3>
+              Votes: {user.votes}
+              {user.votes >= 5 ? (
+                <div>
+                  <FontAwesomeIcon icon={["fab", "jedi-order"]} size="3x" />
+                </div>
+              ) : (
+                <p>Get up to five votes to have a badge</p>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
-}
+};
 
 export default App;
